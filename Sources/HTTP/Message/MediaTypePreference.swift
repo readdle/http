@@ -1,3 +1,12 @@
+#if swift(>=4.1)
+#else
+fileprivate extension Sequence {
+    func compactMap<T>(_ transform: (Self.Element) throws -> T?) rethrows -> [T] {
+        return try flatMap(transform)
+    }
+}
+#endif
+
 /// Represents a `MediaType` and its associated preference, `q`.
 public struct MediaTypePreference {
     /// The `MediaType` in question.
