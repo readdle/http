@@ -7,14 +7,7 @@ public struct HTTPScheme {
 
     /// Enables TLS (SSL). Uses port `443` by default.
     public static var https: HTTPScheme {
-        return .init(443) { channel in
-            return Future.flatMap(on: channel.eventLoop) {
-                let tlsConfiguration = TLSConfiguration.forClient(certificateVerification: .none)
-                let sslContext = try SSLContext(configuration: tlsConfiguration)
-                let tlsHandler = try OpenSSLClientHandler(context: sslContext)
-                return channel.pipeline.add(handler: tlsHandler)
-            }
-        }
+        return https(serverHostname: nil)
     }
 
     /// See `ws`.
@@ -22,6 +15,21 @@ public struct HTTPScheme {
 
     /// See `https`.
     public static let wss: HTTPScheme = .https
+
+    public static func wss(serverHostname: String? = nil) -> HTTPScheme {
+        return https(serverHostname: serverHostname)
+    }
+
+    public static func https(serverHostname: String? = nil) -> HTTPScheme {
+        return .init(443) { channel in
+            return Future.flatMap(on: channel.eventLoop) {
+                let tlsConfiguration = TLSConfiguration.forClient(certificateVerification: .none)
+                let sslContext = try SSLContext(configuration: tlsConfiguration)
+                let tlsHandler = try OpenSSLClientHandler(context: sslContext, serverHostname: serverHostname)
+                return channel.pipeline.add(handler: tlsHandler)
+            }
+        }
+    }
 
     /// The default port to use for this scheme if no override is provided.
     public let defaultPort: Int
