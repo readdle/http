@@ -64,6 +64,12 @@ class HTTPClientTests: XCTestCase {
 
 // MARK: Private
 
+#if os(Android)
+private let tlsConfiguration: TLSConfiguration = .forClient(trustRoots: .file("/data/local/tmp/cacert.pem"))
+#else 
+private let tlsConfiguration: TLSConfiguration = .forClient()
+#endif
+
 private func testURL(_ string: String, times: Int = 3, contains: String) throws {
     try testURL(string, times: times) { res in
         let string = String(data: res.body.data ?? Data(), encoding: .ascii) ?? ""
@@ -94,7 +100,7 @@ private func testURL(
     guard let url = URL(string: string) else {
         throw HTTPError(identifier: "parseURL", reason: "Could not parse URL: \(string)")
     }
-    let scheme: HTTPScheme = url.scheme == "https" ? .https : .http
+    let scheme: HTTPScheme = url.scheme == "https" ? .customHTTPS(tlsConfiguration) : .http
     let worker = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     for _ in 0..<times {
         let res = try HTTPClient.connect(scheme: scheme, hostname: url.host ?? "", on: worker).flatMap(to: HTTPResponse.self) { client in
