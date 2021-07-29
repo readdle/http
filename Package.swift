@@ -8,13 +8,13 @@ let package = Package(
     ],
     dependencies: [
         // 🌎 Utility package containing tools for byte manipulation, Codable, OS APIs, and debugging.
-        .package(url: "https://github.com/readdle/vapor-core.git", .branch("3.9.1-android")),
+        .package(url: "https://github.com/readdle/vapor-core.git", .branch("3.9.1-android.2")),
         
         // Event-driven network application framework for high performance protocol servers & clients, non-blocking.
-        .package(url: "https://github.com/readdle/swift-nio.git", .branch("1.14.1-android")),
+        .package(url: "https://github.com/readdle/swift-nio.git", .branch("1.14.1-android.2")),
 
         // Bindings to OpenSSL-compatible libraries for TLS support in SwiftNIO
-        .package(url: "https://github.com/readdle/swift-nio-ssl.git", .branch("1.4.0-android")),
+        .package(url: "https://github.com/readdle/swift-nio-ssl.git", .branch("1.4.0-android.2")),
     ],
     targets: [
         .target(name: "HTTP", dependencies: ["Async", "Bits", "Core", "Debugging", "NIO", "NIOOpenSSL", "NIOHTTP1"]),
